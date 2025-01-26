@@ -175,7 +175,7 @@ void test_removeIndex4(void)
 }
 
 
-void test_invaidIndex(void)
+void test_invalidIndex(void) //found an extra credit misspelling opportunity
 {
   populate_list();
   void *rval = list_remove_index(lst_, 666);
@@ -313,7 +313,7 @@ int main(void) {
   RUN_TEST(test_removeIndex3);
   RUN_TEST(test_removeIndex4);
   RUN_TEST(test_remove_empty_list);
-  RUN_TEST(test_invaidIndex);
+  RUN_TEST(test_invalidIndex);
   RUN_TEST(test_removeAll);
   RUN_TEST(test_removeLastElement);
   RUN_TEST(test_indexOf0);
