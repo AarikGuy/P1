@@ -1,5 +1,6 @@
 #include "harness/unity.h"
 #include "../src/lab.h"
+#include <string.h>
 
 
 static list_t *lst_ = NULL;
@@ -242,6 +243,67 @@ void test_notInList(void)
   free(data);
 }
 
+void test_removeLastElement(void)
+{
+  populate_list();
+  int *rval = (int *)list_remove_index(lst_, lst_->size - 1);
+  TEST_ASSERT_TRUE(*rval == 0);
+  TEST_ASSERT_TRUE(lst_->size == 4);
+  free(rval);
+
+  node_t *curr = lst_->head->next;
+  
+  for (int i = 3; i >= 0; i--)
+  {
+    TEST_ASSERT_TRUE(*((int *)curr->data) == i + 1);
+    curr = curr->next;
+  }
+}
+
+void test_remove_empty_list(void)
+{
+  void *rval = list_remove_index(lst_, 0);
+  TEST_ASSERT_TRUE(rval == NULL);
+  TEST_ASSERT_TRUE(lst_->size == 0);
+}
+
+void test_add_remove_sequence(void)
+{
+  // Adds elements to the list
+  for (int i = 0; i < 10; i++) {
+    list_add(lst_, alloc_data(i));
+  }
+
+  // Verifies the size and order of the list after adding elements
+  TEST_ASSERT_TRUE(lst_->size == 10);
+  node_t *curr = lst_->head->next;
+  for (int i = 9; i >= 0; i--) {
+    TEST_ASSERT_TRUE(*((int *)curr->data) == i);
+    curr = curr->next;
+  }
+
+  // Removes the elements one by one from the list
+  for (int i = 0; i < 10; i++) {
+    int *rval = (int *)list_remove_index(lst_, 0);
+    TEST_ASSERT_TRUE(*rval == 9 - i);
+    TEST_ASSERT_TRUE(lst_->size == (size_t)(9 - i));
+    free(rval);
+  }
+
+  // Verifies the list is empty and back to its default state
+  TEST_ASSERT_FALSE(lst_->head->next == NULL);
+  TEST_ASSERT_FALSE(lst_->head->prev == NULL);
+  TEST_ASSERT_TRUE(lst_->head->next == lst_->head->prev);
+  TEST_ASSERT_TRUE(lst_->size == 0);
+}
+
+void test_destroy_filled_list(void)
+{
+  populate_list();
+  list_destroy(&lst_);
+  TEST_ASSERT_TRUE(lst_ == NULL);
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_create_destroy);
@@ -250,10 +312,14 @@ int main(void) {
   RUN_TEST(test_removeIndex0);
   RUN_TEST(test_removeIndex3);
   RUN_TEST(test_removeIndex4);
+  RUN_TEST(test_remove_empty_list);
   RUN_TEST(test_invaidIndex);
   RUN_TEST(test_removeAll);
+  RUN_TEST(test_removeLastElement);
   RUN_TEST(test_indexOf0);
   RUN_TEST(test_indexOf3);
   RUN_TEST(test_notInList);
+  RUN_TEST(test_add_remove_sequence);
+  RUN_TEST(test_destroy_filled_list);
   return UNITY_END();
 }
