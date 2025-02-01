@@ -245,27 +245,41 @@ void test_notInList(void)
 
 void test_removeLastElement(void)
 {
-  populate_list();
-  int *rval = (int *)list_remove_index(lst_, lst_->size - 1);
-  TEST_ASSERT_TRUE(*rval == 0);
-  TEST_ASSERT_TRUE(lst_->size == 4);
-  free(rval);
-
-  node_t *curr = lst_->head->next;
+  populate_list(); 
   
+  // Remove the last element from the list and store the returned value
+  int *rval = (int *)list_remove_index(lst_, lst_->size - 1);
+  
+  // Verify that the removed value is 0 (since it was the first inserted and the list follows FIFO)
+  TEST_ASSERT_TRUE(*rval == 0);
+  
+  // Ensure the list size has been updated correctly (previously 5, now 4)
+  TEST_ASSERT_TRUE(lst_->size == 4);
+  
+  free(rval); // Free the removed element to prevent memory leaks
+
+  node_t *curr = lst_->head->next; // Start from the first actual node
+
+  // Iterates through the remaining elements to verify the correct order
   for (int i = 3; i >= 0; i--)
   {
-    TEST_ASSERT_TRUE(*((int *)curr->data) == i + 1);
-    curr = curr->next;
+    TEST_ASSERT_TRUE(*((int *)curr->data) == i + 1); // Checks that values are shifted correctly
+    curr = curr->next; 
   }
 }
+
 
 void test_remove_empty_list(void)
 {
   void *rval = list_remove_index(lst_, 0);
+  
+  // Ensures that attempting to remove an element from an empty list returns NULL
   TEST_ASSERT_TRUE(rval == NULL);
+  
+  // Ensure the list size remains zero after the operation
   TEST_ASSERT_TRUE(lst_->size == 0);
 }
+
 
 void test_add_remove_sequence(void)
 {
